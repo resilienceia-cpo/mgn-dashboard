@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard BBDD MGN — Soluciones Eléctricas</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: #f5f4f0;
+    color: #2c2c2a;
+    padding: 24px 20px;
+    min-height: 100vh;
+  }
+
+  .page-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c2c2a;
+    margin-bottom: 4px;
+  }
+  .page-sub {
+    font-size: 12px;
+    color: #888780;
+    margin-bottom: 20px;
+  }
+
+  /* ── Metric cards ── */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .metric {
+    background: #fff;
+    border: 0.5px solid #d3d1c7;
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .metric-val {
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.1;
+  }
+  .metric-lbl {
+    font-size: 11px;
+    color: #888780;
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: #fff;
+    border: 0.5px solid #d3d1c7;
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    color: #2c2c2a;
+  }
+
+  /* ── Two-col grid ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+
+  /* ── Completitud bars ── */
+  .comp-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+  .comp-label { min-width: 190px; color: #5f5e5a; }
+  .comp-bar-wrap { flex: 1; background: #f1efe8; border-radius: 4px; height: 8px; overflow: hidden; }
+  .comp-bar { height: 100%; border-radius: 4px; }
+  .comp-val { font-weight: 600; min-width: 42px; text-align: right; font-size: 12px; }
+
+  /* ── Table rows ── */
+  .tbl-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    border-bottom: 0.5px solid #f1efe8;
+    font-size: 12px;
+  }
+  .tbl-row:last-child { border: none; }
+  .tbl-label { color: #5f5e5a; }
+  .pill {
+    font-size: 11px;
+    padding: 2px 9px;
+    border-radius: 10px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  /* ── Chart containers ── */
+  .chart-wrap { position: relative; width: 100%; }
+
+  /* ── Alert box ── */
+  .alert {
+    border-left: 3px solid;
+    border-radius: 0 8px 8px 0;
+    padding: 9px 12px;
+    font-size: 11px;
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+
+  /* ── Legend ── */
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 10px; font-size: 11px; color: #5f5e5a; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; margin-right: 4px; }
+
+  /* ── Footer ── */
+  .footer {
+    margin-top: 20px;
+    font-size: 11px;
+    color: #b4b2a9;
+    text-align: center;
+  }
+
+  @media (max-width: 700px) {
+    .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+    .two-col { grid-template-columns: 1fr; }
+    .three-col { grid-template-columns: 1fr; }
+    .comp-label { min-width: 140px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-title">Dashboard BBDD — MGN Soluciones Eléctricas</div>
+<div class="page-sub">Base de datos unificada · Última actualización: Marzo 2026 · Enlazar.digital</div>
+
+<!-- ── Métricas principales ── -->
+<div class="metrics-grid">
+  <div class="metric">
+    <div class="metric-val">18.350</div>
+    <div class="metric-lbl">Registros originales</div>
+  </div>
+  <div class="metric">
+    <div class="metric-val" style="color:#a32d2d">3.031</div>
+    <div class="metric-lbl">Duplicados netos<br>a eliminar</div>
+  </div>
+  <div class="metric">
+    <div class="metric-val" style="color:#0f6e56">15.225</div>
+    <div class="metric-lbl">Base deduplicada<br>final</div>
+  </div>
+  <div class="metric">
+    <div class="metric-val">2.557</div>
+    <div class="metric-lbl">Emails únicos<br>duplicados</div>
+  </div>
+</div>
+
+<!-- ── Completitud + Rubros ── -->
+<div class="two-col">
+
+  <div class="card">
+    <div class="card-title">Completitud — base limpia (15.225)</div>
+    <div class="comp-row">
+      <span class="comp-label">✅ Nombre + Apellido + Email</span>
+      <div class="comp-bar-wrap"><div class="comp-bar" style="width:63.1%;background:#1d9e75"></div></div>
+      <span class="comp-val">9.613</span>
+    </div>
+    <div class="comp-row">
+      <span class="comp-label">📧 Solo email</span>
+      <div class="comp-bar-wrap"><div class="comp-bar" style="width:29.8%;background:#ba7517"></div></div>
+      <span class="comp-val">4.537</span>
+    </div>
+    <div class="comp-row">
+      <span class="comp-label">🔀 Combinaciones parciales</span>
+      <div class="comp-bar-wrap"><div class="comp-bar" style="width:7%;background:#888780"></div></div>
+      <span class="comp-val">1.073</span>
+    </div>
+    <div class="comp-row" style="margin-bottom:0">
+      <span class="comp-label">👤 Solo nombre y apellido</span>
+      <div class="comp-bar-wrap"><div class="comp-bar" style="width:0.5%;background:#e24b4a"></div></div>
+      <span class="comp-val">2</span>
+    </div>
+    <div class="alert" style="border-color:#888780;background:#f5f4f0;color:#5f5e5a;margin-top:12px;">
+      📵 <strong style="color:#2c2c2a">Teléfonos: 0 / 15.225</strong> — campo vacío en toda la base
+      &nbsp;·&nbsp; Info adicional: <strong style="color:#2c2c2a">2.370</strong> contactos (15.6%)
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Rubros / segmentos — 24 distintos</div>
+    <div class="chart-wrap" style="height:220px">
+      <canvas id="chartRubros"></canvas>
+    </div>
+    <div class="alert" style="border-color:#ba7517;background:#faeeda;color:#633806;margin-top:10px;">
+      ⚠️ <strong>13.043 contactos (85.7%)</strong> sin rubro asignado
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Empresas + Duplicados ── -->
+<div class="two-col">
+
+  <div class="card">
+    <div class="card-title">Top 10 empresas por contactos</div>
+    <div class="tbl-row"><span class="tbl-label">gmail (dominios genéricos)</span><span class="pill" style="background:#f1efe8;color:#444441">1.289</span></div>
+    <div class="tbl-row"><span class="tbl-label">YPF</span><span class="pill" style="background:#e1f5ee;color:#085041">891</span></div>
+    <div class="tbl-row"><span class="tbl-label">Ternium</span><span class="pill" style="background:#e1f5ee;color:#085041">812</span></div>
+    <div class="tbl-row"><span class="tbl-label">hotmail (genéricos)</span><span class="pill" style="background:#f1efe8;color:#444441">487</span></div>
+    <div class="tbl-row"><span class="tbl-label">Tenaris</span><span class="pill" style="background:#e1f5ee;color:#085041">404</span></div>
+    <div class="tbl-row"><span class="tbl-label">SET (YPF subsidiaria)</span><span class="pill" style="background:#e1f5ee;color:#085041">373</span></div>
+    <div class="tbl-row"><span class="tbl-label">Cargill</span><span class="pill" style="background:#e1f5ee;color:#085041">370</span></div>
+    <div class="tbl-row"><span class="tbl-label">ArcelorMittal</span><span class="pill" style="background:#e1f5ee;color:#085041">364</span></div>
+    <div class="tbl-row"><span class="tbl-label">Techint</span><span class="pill" style="background:#e1f5ee;color:#085041">333</span></div>
+    <div class="tbl-row"><span class="tbl-label">Schneider Electric</span><span class="pill" style="background:#eeedfe;color:#3c3489">301</span></div>
+    <div style="margin-top:8px;font-size:11px;color:#888780;">2.553 empresas distintas · 78 con nombre identificado</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Top 10 empresas con más duplicados</div>
+    <div class="tbl-row"><span class="tbl-label">Tenaris</span><span class="pill" style="background:#fcebeb;color:#791f1f">972</span></div>
+    <div class="tbl-row"><span class="tbl-label">Ternium</span><span class="pill" style="background:#fcebeb;color:#791f1f">294</span></div>
+    <div class="tbl-row"><span class="tbl-label">YPF</span><span class="pill" style="background:#fcebeb;color:#791f1f">203</span></div>
+    <div class="tbl-row"><span class="tbl-label">ArcelorMittal</span><span class="pill" style="background:#faeeda;color:#633806">183</span></div>
+    <div class="tbl-row"><span class="tbl-label">Renova</span><span class="pill" style="background:#faeeda;color:#633806">182</span></div>
+    <div class="tbl-row"><span class="tbl-label">Secco</span><span class="pill" style="background:#faeeda;color:#633806">156</span></div>
+    <div class="tbl-row"><span class="tbl-label">Monsanto</span><span class="pill" style="background:#faeeda;color:#633806">142</span></div>
+    <div class="tbl-row"><span class="tbl-label">Cargill</span><span class="pill" style="background:#faeeda;color:#633806">139</span></div>
+    <div class="tbl-row"><span class="tbl-label">Newmont</span><span class="pill" style="background:#faeeda;color:#633806">138</span></div>
+    <div class="tbl-row"><span class="tbl-label">Loma Negra</span><span class="pill" style="background:#faeeda;color:#633806">122</span></div>
+    <div style="margin-top:8px;font-size:11px;color:#888780;">350 empresas afectadas · criterio: email duplicado</div>
+  </div>
+
+</div>
+
+<!-- ── Gráficos de torta ── -->
+<div class="two-col">
+
+  <div class="card">
+    <div class="card-title">Distribución de completitud</div>
+    <div class="legend">
+      <span><span class="legend-dot" style="background:#1d9e75"></span>Nombre + Apellido + Email (63.1%)</span>
+      <span><span class="legend-dot" style="background:#ba7517"></span>Solo Email (29.8%)</span>
+      <span><span class="legend-dot" style="background:#888780"></span>Parciales (7%)</span>
+      <span><span class="legend-dot" style="background:#e24b4a"></span>Solo Nombre (0.1%)</span>
+    </div>
+    <div class="chart-wrap" style="height:200px">
+      <canvas id="chartCompletitud"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Motivo de duplicados (3.031 netos)</div>
+    <div class="legend">
+      <span><span class="legend-dot" style="background:#e24b4a"></span>Solo email duplicado (66.2%)</span>
+      <span><span class="legend-dot" style="background:#fac775"></span>Email + Nombre/Apellido (33.8%)</span>
+    </div>
+    <div class="chart-wrap" style="height:200px">
+      <canvas id="chartDuplicados"></canvas>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">MGN Soluciones Eléctricas · Dashboard generado por Enlazar.digital · Datos: Base_de_Datos_Segmentada_subirEnRopofy.xlsx</div>
+
+<script>
+// ── Chart: Rubros ──
+new Chart(document.getElementById('chartRubros'), {
+  type: 'bar',
+  data: {
+    labels: ['Food & Bev.','Acería','Proveedor','Automotriz','MGN','Energía','Cementeras','AOG','Transporte','Minería'],
+    datasets: [{
+      data: [635, 404, 350, 153, 163, 108, 116, 76, 68, 66],
+      backgroundColor: ['#1d9e75','#1d9e75','#888780','#1d9e75','#7f77dd','#ba7517','#888780','#888780','#888780','#888780'],
+      borderRadius: 4,
+      borderSkipped: false,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#888780' } },
+      y: { grid: { color: '#f1efe8' }, ticks: { font: { size: 10 }, color: '#888780' } }
+    }
+  }
+});
+
+// ── Chart: Completitud ──
+new Chart(document.getElementById('chartCompletitud'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Nombre+Ape+Email','Solo Email','Parciales','Solo Nombre'],
+    datasets: [{
+      data: [9613, 4537, 1073, 2],
+      backgroundColor: ['#1d9e75','#ba7517','#888780','#e24b4a'],
+      borderWidth: 2,
+      borderColor: '#fff',
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    cutout: '62%'
+  }
+});
+
+// ── Chart: Duplicados ──
+new Chart(document.getElementById('chartDuplicados'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Solo email duplicado','Email + Nombre/Apellido'],
+    datasets: [{
+      data: [2008, 1023],
+      backgroundColor: ['#e24b4a','#fac775'],
+      borderWidth: 2,
+      borderColor: '#fff',
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    cutout: '62%'
+  }
+});
+</script>
+
+</body>
+</html>
