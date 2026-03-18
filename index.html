@@ -120,6 +120,7 @@
       <button class="tab active" onclick="showPanel('bbdd',this)">📋 BBDD</button>
       <button class="tab" onclick="showPanel('nps',this)">⭐ NPS</button>
       <button class="tab" onclick="showPanel('cruce',this)">🔗 Cruce</button>
+      <button class="tab" onclick="showPanel('ropofy',this)">🤖 Ropofy</button>
     </div>
   </div>
 
@@ -366,12 +367,113 @@
 
   </div><!-- /panel-cruce -->
 
-  <div class="footer">MGN Soluciones Eléctricas · Dashboard generado por Enlazar.digital · Datos: BBDD_MGN_Segmentado_Ropofy + Encuesta NPS Marzo 2026</div>
+  <!-- ══════════════════════════════════════════════
+       PANEL 4 — ROPOFY CRM
+  ══════════════════════════════════════════════ -->
+  <div id="panel-ropofy" class="panel">
+
+    <div class="metrics-grid">
+      <div class="metric"><div class="metric-val">2.826</div><div class="metric-lbl">Contactos en Ropofy CRM</div></div>
+      <div class="metric"><div class="metric-val" style="color:var(--green)">2.768</div><div class="metric-lbl">Con teléfono<br>(97.9%)</div></div>
+      <div class="metric"><div class="metric-val" style="color:var(--amber)">770</div><div class="metric-lbl">Con email válido<br>(27.2%)</div></div>
+      <div class="metric"><div class="metric-val" style="color:var(--purple)">670</div><div class="metric-lbl">Con empresa asignada<br>(23.7%)</div></div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Completitud de contactos Ropofy</div>
+        <div class="bar-row"><span class="bar-label">✅ Nombre + Apellido correcto</span><div class="bar-wrap"><div class="bar-fill" style="width:36.8%;background:#1d9e75"></div></div><span class="bar-val">1.039</span></div>
+        <div class="bar-row"><span class="bar-label">⚠️ Nombre/apellido MAL cargado</span><div class="bar-wrap"><div class="bar-fill" style="width:15.4%;background:#ba7517"></div></div><span class="bar-val">435</span></div>
+        <div class="bar-row"><span class="bar-label">👤 Sin nombre ni apellido</span><div class="bar-wrap"><div class="bar-fill" style="width:36.7%;background:#888780"></div></div><span class="bar-val">1.036</span></div>
+        <div class="bar-row"><span class="bar-label">📞 Solo teléfono (sin email)</span><div class="bar-wrap"><div class="bar-fill" style="width:72.1%;background:#3c3489"></div></div><span class="bar-val">2.038</span></div>
+        <div class="bar-row" style="margin-bottom:0"><span class="bar-label">📧 Solo email (sin teléfono)</span><div class="bar-wrap"><div class="bar-fill" style="width:1.4%;background:#ba7517;min-width:2px"></div></div><span class="bar-val">40</span></div>
+        <div class="alert" style="border-color:var(--amber);background:var(--amber-lt);color:#633806;margin-top:12px;">
+          ⚠️ <strong>435 contactos</strong> tienen consultas o frases cargadas en el campo Nombre/Apellido en lugar de datos reales. Requieren limpieza manual en Ropofy.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Distribución de contactos Ropofy</div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#1d9e75"></div>Nombre+Apellido correcto</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#ba7517"></div>Nombre/Apellido MAL</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#888780"></div>Sin nombre ni apellido</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#3c3489"></div>Resto</div>
+        </div>
+        <div class="chart-wrap" style="height:200px"><canvas id="chartRopofyComp"></canvas></div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Estado / Tags de contactos</div>
+        <div class="tbl-row"><span class="tbl-lbl">Atención activa</span><span class="pill" style="background:var(--purple-lt);color:#3c3489">541 — 19.1%</span></div>
+        <div class="tbl-row"><span class="tbl-lbl">Gestionado</span><span class="pill" style="background:var(--green-lt);color:#085041">363 — 12.8%</span></div>
+        <div class="tbl-row"><span class="tbl-lbl">Gestionado + atención activa</span><span class="pill" style="background:var(--green-lt);color:#085041">26 — 0.9%</span></div>
+        <div class="tbl-row"><span class="tbl-lbl">Sin tag asignado</span><span class="pill" style="background:var(--gray-lt);color:#444441">1.896 — 67.1%</span></div>
+        <div class="alert" style="border-color:#888780;background:var(--gray-lt);color:var(--text-2);margin-top:10px;">
+          El 67.1% de los contactos no tiene tag. Asignar etiquetas es clave para segmentar campañas en Ropofy y EnvíaloSimple.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Cruce Ropofy ↔ BBDD MGN</div>
+        <div class="tbl-row"><span class="tbl-lbl">Emails únicos en Ropofy</span><span class="pill" style="background:var(--purple-lt);color:#3c3489">770</span></div>
+        <div class="tbl-row"><span class="tbl-lbl">Match con BBDD MGN</span><span class="pill" style="background:var(--green-lt);color:#085041">106 contactos</span></div>
+        <div class="tbl-row"><span class="tbl-lbl">% de cobertura</span><span class="pill" style="background:var(--green-lt);color:#085041">13.8% de emails Ropofy</span></div>
+        <div class="tbl-row"><span class="tbl-lbl">Teléfonos nuevos aportados a MGN</span><span class="pill" style="background:var(--green-lt);color:#085041">+75 teléfonos</span></div>
+        <div class="tbl-row"><span class="tbl-lbl">Contactos Ropofy no en MGN</span><span class="pill" style="background:var(--amber-lt);color:#633806">664 emails nuevos</span></div>
+        <div class="alert" style="border-color:var(--green);background:var(--green-lt);color:#085041;margin-top:10px;">
+          <strong>75 contactos de la BBDD MGN</strong> recibieron un teléfono nuevo gracias al cruce con Ropofy — campo que estaba vacío en toda la base original.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Estructura del archivo Export_Contacts_Ropofy_Organizado.xlsx — 8 hojas</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;">
+        <div style="background:var(--green-lt);border-radius:var(--r-md);padding:11px;">
+          <div style="font-size:12px;font-weight:600;color:#085041;margin-bottom:3px;">✅ Nombre-Apellido Correcto (1.039)</div>
+          <div style="font-size:11px;color:#0f6e56;">Contactos con nombre y apellido válidos. Listos para campañas personalizadas.</div>
+        </div>
+        <div style="background:var(--amber-lt);border-radius:var(--r-md);padding:11px;">
+          <div style="font-size:12px;font-weight:600;color:#633806;margin-bottom:3px;">⚠️ Nombre-Apellido MAL (435)</div>
+          <div style="font-size:11px;color:var(--amber);">Tienen consultas o frases en el campo nombre. Requieren corrección manual en Ropofy.</div>
+        </div>
+        <div style="background:var(--purple-lt);border-radius:var(--r-md);padding:11px;">
+          <div style="font-size:12px;font-weight:600;color:var(--purple);margin-bottom:3px;">📞 Solo Teléfono (2.038)</div>
+          <div style="font-size:11px;color:#534ab7;">Sin email — contactables solo por WhatsApp. Canal principal en Ropofy.</div>
+        </div>
+        <div style="background:var(--amber-lt);border-radius:var(--r-md);padding:11px;">
+          <div style="font-size:12px;font-weight:600;color:#633806;margin-bottom:3px;">📧 Solo Email (40)</div>
+          <div style="font-size:11px;color:var(--amber);">Sin teléfono — contactables solo por email o EnvíaloSimple.</div>
+        </div>
+        <div style="background:var(--gray-lt);border-radius:var(--r-md);padding:11px;">
+          <div style="font-size:12px;font-weight:600;color:#444441;margin-bottom:3px;">👤 Sin Nombre-Apellido (1.036)</div>
+          <div style="font-size:11px;color:var(--text-2);">Sin identificación de persona. Solo email o teléfono disponible.</div>
+        </div>
+        <div style="background:var(--green-lt);border-radius:var(--r-md);padding:11px;">
+          <div style="font-size:12px;font-weight:600;color:#085041;margin-bottom:3px;">🔗 Cruce MGN — enriquecidos (75)</div>
+          <div style="font-size:11px;color:#0f6e56;">Contactos de la BBDD MGN que recibieron teléfono nuevo del cruce con Ropofy.</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /panel-ropofy -->
+
+  <div class="footer">MGN Soluciones Eléctricas · Dashboard generado por Enlazar.digital · Datos: BBDD_MGN_Segmentado_Ropofy + Encuesta NPS + Ropofy CRM · Marzo 2026</div>
 
 </div><!-- /page -->
 
 <script>
-// ── Tab navigation ──────────────────────────────────────────────────────────
+// ── Chart: Ropofy completitud (donut) ───────────────────────────────────────
+new Chart(document.getElementById('chartRopofyComp'), {
+  type: 'doughnut',
+  data: { labels:['Nombre+Apellido OK','Nombre/Apellido MAL','Sin nombre/apellido','Resto'],
+    datasets:[{ data:[1039,435,1036,316],
+      backgroundColor:[C.green,C.amber,C.gray,C.purple], borderWidth:2, borderColor:'#fff' }] },
+  options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, cutout:'62%' }
+});
 function showPanel(id, btn) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
